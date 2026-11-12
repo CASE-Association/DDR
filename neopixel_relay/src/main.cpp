@@ -1,24 +1,29 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-#define MATLEDS 60
-#define CARLEDS 294
-#define MATPIN 0
-#define CARPIN 2
+#include <Keyboard.h>
+#define ENTER_PIN 2
+#define ESC_PIN 3
+#define LED_PIN 4
 
-#define LEDSTOTAL 354
+bool lastEnter = HIGH;
+bool lastEsc = HIGH;
 
-CRGB carleds[CARLEDS];
-CRGB matleds[MATLEDS];
+
+#define ledcount 300
+
+
+CRGB leds[ledcount];
 
 void setup() {
-  // put your setup code here, to run once:
+  pinMode(ENTER_PIN, INPUT_PULLUP);
+  pinMode(ESC_PIN, INPUT_PULLUP);
+  Keyboard.begin();
+
 
   Serial.begin(115200);
-  FastLED.addLeds<WS2811, CARPIN, BRG>(carleds, CARLEDS);
-  FastLED.addLeds<WS2811, MATPIN, BRG>(matleds, MATLEDS);
-  carleds[0]=CRGB::Red;
-  matleds[0]=CRGB::Red;
+  FastLED.addLeds<WS2811, LED_PIN, BRG>(leds, ledcount);
+  leds[0]=CRGB::Red;
   FastLED.show();
   delay(1000);
 }
@@ -26,21 +31,43 @@ void setup() {
 int i = 0;
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  //Serial.println("HELLO WORLD");
-  if(i >= LEDSTOTAL*3){
+  if(i >= ledcount*3){
     i = 0;
+  }
+  
+  bool enter = digitalRead(ENTER_PIN);
+  bool esc = digitalRead(ESC_PIN);
+  
+  if (enter != lastEnter) {
+    lastEnter = enter;
+    if (enter == LOW) {
+      Keyboard.press(KEY_RETURN);
+      delay(50);
+    }else{
+      Keyboard.release(KEY_RETURN);
+      delay(50);
+    }
+  }
+  if (esc != lastEsc) {
+    lastEsc = esc;
+    if (esc == LOW) {
+      Keyboard.press(KEY_ESC);
+      delay(50);
+    }else{
+      Keyboard.release(KEY_ESC);
+      delay(50);
+    }
+  }
+
+  if(Serial.available() == 0){
+    return;
   }
   byte val = Serial.read();
   if(val == 255){
     FastLED.show();
     i = 0;
   }else{
-    if(i < CARLEDS*3){
-      carleds[i/3][i%3]=val;
-    }else{
-      matleds[i/3 - CARLEDS][i%3]=val;
-    }
+    leds[i/3][i%3]=val;
     i++;
   }
 }
