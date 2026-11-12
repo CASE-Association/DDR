@@ -1,21 +1,14 @@
+# DDR Lighting & control
+Remote control and lighting effects for the CASE Dance Dance Revolution vehicle. 
 
-# CASE CORTEGE 2024 
+- `cortege_on_esp`: receiver for MIT App Inventor control.
+- `neopixel_relay`: emulates Enter & Esc, pushes lighting data from serial to the neopixels.
+- `outfox-lights`: reads lighting from OutFox memory, generates lighting effects sent to the above.
 
-This repository contains the code used for one of the CASE-lab's vehicles for the Chalmers cortège. The vehicle is built primarily by "aspiring" (ASP) members.
+OutFox shipped separately!
 
-**The Cortège starts april 30th, at 18:15**
+# DDR-dator usage
+Download the latest release from the sidebar. Inside it, there's two apps. Double-click and launch both.
 
-The vehicle is a moving "Dance Dance Revolution" platform. The vehicle is controlled remotely using the ESPNOW protocol.
-
-With minor modification, the platform can be reused for other purposes. 
-
-
-## Repo info
-### Vehicle control
-The folders cortege_remote and cortege_on_esp contain the code used to control the vehicle. 
-
-**Cortege_on_esp** contains the onboard firmware. The program recieves data from the remote and controls the motors. It applies heavy smoothing to make vehicle control less jerky.
-
-**cortege_remote** is the software used for the remote. The program sends data retrieved from two linear potentiometers. Some deadzone and a "dead man's switch" is applied for ease of use and safety.
-
-### Dancing platform
+- `outfox-lights`: Extracts lighting data from OutFox. Just start and leave be
+- `stepmania.exe`: Reads the lighting data and sends it over serial to the lights. It must have its dependencies in the `stepmania\` folder with it!
